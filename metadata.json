@@ -1,0 +1,5 @@
+{
+  "name": "Conversor CSV para XLSX com Data",
+  "description": "Um aplicativo que recebe um arquivo CSV, adiciona uma coluna de data com base na entrada do usuário, converte-o para XLSX e o renomeia de acordo com o local e a data da coleta.",
+  "requestFramePermissions": []
+}
