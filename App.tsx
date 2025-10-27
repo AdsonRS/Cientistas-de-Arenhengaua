@@ -35,7 +35,7 @@ const App: React.FC = () => {
       Papa.parse(csvFile, {
         complete: (results: any) => {
           try {
-            const originalData: string[][] = results.data;
+            const originalData: (string|number)[][] = results.data;
 
             if (!originalData || originalData.length === 0 || originalData[0].length === 0) {
               return reject(new Error("O arquivo CSV está vazio ou é inválido."));
@@ -55,8 +55,19 @@ const App: React.FC = () => {
 
             for (let i = 1; i < originalData.length; i++) {
               const row = originalData[i];
-               if (row.some(cell => cell && cell.trim() !== '')) {
-                 const newRow = [...row];
+               if (row.some(cell => cell && String(cell).trim() !== '')) {
+                 // Converte células que parecem números para o tipo Number
+                 const newRow = row.map(cell => {
+                   const trimmedCell = typeof cell === 'string' ? cell.trim() : cell;
+                   if (trimmedCell === null || trimmedCell === '') {
+                     return trimmedCell;
+                   }
+                   // Converte para tipo numérico para que o Excel o reconheça como número
+                   if (typeof trimmedCell === 'string' && /^-?\d+(\.\d+)?$/.test(trimmedCell)) {
+                     return parseFloat(trimmedCell);
+                   }
+                   return trimmedCell;
+                 });
                  newRow.splice(3, 0, formattedDateForColumn); // Insere a data na coluna D (índice 3)
                  newData.push(newRow);
                }
